@@ -1,0 +1,14 @@
+# Synced reference documents; keep the CV source out of GitHub.
+/sources/
+
+# Local Codex project instructions belong to this workspace.
+/AGENTS.md
+
+# Generated resume output is not part of the public portfolio site.
+/dist/*.pdf
+
+# Python and operating-system generated files.
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db

@@ -165,7 +165,7 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    number: "03",
+    number: "01",
     type: "APPLIED AI · FORD",
     title: "From Daily Batches to Real-Time Claims Intelligence",
     description:
@@ -176,7 +176,7 @@ export const projects: Project[] = [
     tone: "project-ai",
   },
   {
-    number: "04",
+    number: "02",
     type: "DATA PLATFORM · FORD",
     title: "A Spark Data Cube for 40M Daily Claims",
     description:
@@ -187,7 +187,7 @@ export const projects: Project[] = [
     tone: "project-data",
   },
   {
-    number: "09",
+    number: "03",
     type: "MACHINE LEARNING · BBVA",
     title: "Credit-Risk Models for Cards and Personal Loans",
     description:
@@ -198,7 +198,7 @@ export const projects: Project[] = [
     tone: "project-optimization",
   },
   {
-    number: "02",
+    number: "04",
     type: "OPTIMIZATION · BBVA",
     title: "Genetic Algorithms for Loan Allocation",
     description:
@@ -365,25 +365,25 @@ export const education = [
 export const animationOptions = [
   {
     id: "nodes",
-    number: "01",
+    number: "03",
     label: "Neural nodes",
     detail: "Connections awaken as signals move through the network.",
   },
   {
     id: "brain",
-    number: "02",
+    number: "04",
     label: "Luminous brain",
     detail: "Electric pulses travel along luminous brain-like fibers.",
   },
   {
     id: "mesh",
-    number: "03",
+    number: "09",
     label: "Neural mesh",
     detail: "An interactive 3D surface ripples with the data flow.",
   },
   {
     id: "waves",
-    number: "04",
+    number: "02",
     label: "Particle waves",
     detail: "Particle bands bend gently toward the cursor.",
   },

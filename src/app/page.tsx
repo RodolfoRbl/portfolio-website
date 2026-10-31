@@ -32,12 +32,13 @@ export default function HomePage() {
               engineering, cloud, and optimization together to solve practical problems.
             </p>
             <div className="hero-actions">
-              <a className="button button-primary" href="#contact">
+              <a className="button button-primary hero-cta" href="#contact">
                 Let’s Connect!
               </a>
             </div>
             <p className="location-note">
-              Born in Mexico City <span>·</span> Open to international opportunities
+              <span>Born in Mexico City</span>
+              <span>Open to international opportunities</span>
             </p>
             <SocialLinks />
           </div>

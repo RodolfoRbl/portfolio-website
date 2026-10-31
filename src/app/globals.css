@@ -4444,11 +4444,16 @@ button {
   background: rgba(8, 22, 29, 0.35) !important;
 }
 .hero .location-note {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
   font: 11px var(--mono);
   color: #78d9d0;
 }
 .hero .location-note span {
   color: #78d9d0;
+  margin: 0;
 }
 .social-links,
 .hero-copy > .hero-actions + .location-note + .hero-actions {
@@ -4608,5 +4613,105 @@ button {
   }
   .animation-picker button {
     transition: none;
+  }
+}
+
+/* Social marks stay unframed in the hero, while retaining labels at the footer. */
+html {
+  scroll-padding-top: 82px;
+}
+main section[id] {
+  scroll-margin-top: 82px;
+}
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+.social-links .button {
+  min-width: 42px;
+  min-height: 44px;
+  padding: 2px;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent;
+  font-size: 0;
+}
+.social-links .button-icon {
+  width: 42px;
+  height: 42px;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #c3e9e8;
+  transition:
+    color 0.22s ease,
+    transform 0.22s ease,
+    filter 0.22s ease;
+}
+.social-links .button-icon svg {
+  width: 29px;
+  height: 29px;
+  stroke-width: 1.7;
+}
+.social-links a:hover .button-icon,
+.social-links a:focus-visible .button-icon {
+  color: var(--accent-secondary);
+  transform: translateY(-3px) scale(1.07);
+  filter: drop-shadow(0 0 8px #55d5c755);
+}
+.contact-social-links .button {
+  min-height: 44px;
+  min-width: 0;
+  padding: 2px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #e8f2f5;
+  font-size: 12px;
+}
+.contact-social-links .button-icon {
+  width: 34px;
+  height: 34px;
+}
+.contact-social-links .button-icon svg {
+  width: 25px;
+  height: 25px;
+}
+.site-header.is-scrolled {
+  background: linear-gradient(
+    90deg,
+    rgba(7, 10, 16, 0.95) 0%,
+    rgba(7, 10, 16, 0.98) 8%,
+    rgba(7, 10, 16, 0.98) 92%,
+    rgba(7, 10, 16, 0.95) 100%
+  ) !important;
+}
+@media (max-width: 700px) {
+  html {
+    scroll-padding-top: 72px;
+  }
+  main section[id] {
+    scroll-margin-top: 72px;
+  }
+  .social-links {
+    gap: 9px;
+  }
+  .social-links .button,
+  .social-links .button-icon {
+    min-width: 40px;
+    min-height: 42px;
+    width: 40px;
+    height: 42px;
+  }
+  .contact-social-links .button {
+    width: auto;
+    min-width: 0;
+    gap: 7px;
+    font-size: 11px;
   }
 }

@@ -21,7 +21,9 @@ function InstagramIcon() {
 
 export function SocialLinks({ labeled = false }: { labeled?: boolean }) {
   return (
-    <div className={labeled ? "contact-actions reveal" : "hero-actions"}>
+    <div
+      className={labeled ? "social-links contact-social-links" : "social-links hero-social-links"}
+    >
       <a
         className={labeled ? "button button-primary" : "button button-primary"}
         href="mailto:rodolforoblesramos@gmail.com"

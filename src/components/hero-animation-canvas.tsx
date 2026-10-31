@@ -37,14 +37,12 @@ function createPoints(type: AnimationId): Point[] {
   }
 
   if (type === "mesh") {
-    const rows = 9;
-    const columns = 13;
-    return Array.from({ length: rows * columns }, (_, index) => {
-      const row = Math.floor(index / columns);
-      const column = index % columns;
+    return Array.from({ length: 106 }, () => {
+      const theta = random() * Math.PI * 2;
+      const radius = Math.sqrt(random());
       return {
-        x: -1.35 + (column / (columns - 1)) * 2.7 + (random() - 0.5) * 0.11,
-        y: -0.76 + (row / (rows - 1)) * 1.52 + (random() - 0.5) * 0.1,
+        x: Math.cos(theta) * radius * 1.48,
+        y: Math.sin(theta) * radius * 0.88,
         z: 0,
         phase: random() * Math.PI * 2,
       };
@@ -95,9 +93,9 @@ function createEdges(points: Point[], type: AnimationId): Edge[] {
       }))
       .filter((candidate) => candidate.candidateIndex !== index)
       .sort((left, right) => left.distance - right.distance)
-      .slice(0, type === "brain" ? 3 : 2)
+      .slice(0, type === "brain" || type === "mesh" ? 3 : 2)
       .forEach(({ candidateIndex, distance }) => {
-        if (distance < (type === "brain" ? 0.42 : 0.58)) {
+        if (distance < (type === "brain" ? 0.42 : type === "mesh" ? 0.36 : 0.58)) {
           const first = Math.min(index, candidateIndex);
           const second = Math.max(index, candidateIndex);
           edgeKeys.add(`${first}:${second}`);

@@ -1,15 +1,28 @@
-# Rodolfo Robles — Personal Portfolio
+# Rodolfo Robles — portfolio
 
-A buildless static site for international AI engineering, data science, and data engineering opportunities.
+An English-language portfolio built with Next.js App Router, React, TypeScript, and React Three Fiber. The portfolio is statically exported for GitHub Pages.
 
-## Preview
+## Local development
 
-Serve `dist/` with any local static file server and open `index.html`.
+Requires Node.js 20.9 or later.
 
-## Static hosting
+```sh
+npm ci
+npm run dev
+```
 
-Upload the full contents of `dist/` to a static hosting provider. Keep `index.html`, `styles.css`, `enhancements.css`, `company-logos.css`, `script.js`, `favicon.svg`, `logos/` together. No backend or package installation is required.
+Open `http://localhost:3000` while the development server is running.
 
-The site includes a chronological career timeline with expandable role highlights, a selective filterable achievements section, six Featured Projects, single-column technology cards with hover and keyboard-focus reveals for data engineering, cloud/GCP, AI/ML, DevOps, and analytics, and a featured UNAM diploma. Company and university marks are stored locally as PNG assets in `dist/logos/`; sources are listed in `dist/logos/README.md`. Social links include email, LinkedIn, and Instagram. 
+## Build for GitHub Pages
 
+```sh
+GITHUB_PAGES=true npm run build
+```
 
+The static site is emitted to `out/`. The GitHub Actions workflow builds and deploys it when changes reach `main`; pushes to `codex/nextjs-migration` run a build check only. The project uses the `/portfolio-website` base path for the repository Pages URL.
+
+## Hero animation choices
+
+Choose between neural nodes, luminous brain fibers, a reactive 3D neural mesh, and cursor-reactive particle waves using the controls in the hero. The neural mesh is selected by default. Motion pauses outside the visible hero and respects reduced-motion preferences.
+
+Portfolio copy and entries are grouped in `src/data/portfolio.ts`; page composition lives in `src/app/page.tsx` and reusable UI in `src/components/`.

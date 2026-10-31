@@ -4682,6 +4682,112 @@ main section[id] {
   width: 25px;
   height: 25px;
 }
+.technology-marquee-wrap {
+  margin-top: 38px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(104, 156, 176, 0.14);
+}
+.technology-marquee-heading {
+  margin: 0 0 4px;
+  color: #86dcd4;
+  font: 10px/1.5 var(--mono);
+  letter-spacing: 0.06em;
+}
+.technology-marquee {
+  overflow: hidden;
+  padding: 12px 0 16px;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+}
+.technology-marquee-track,
+.technology-marquee-group {
+  display: flex;
+  width: max-content;
+  align-items: center;
+}
+.technology-marquee-track {
+  animation: technology-marquee-scroll 48s linear infinite;
+  will-change: transform;
+}
+.technology-marquee-group {
+  flex: 0 0 auto;
+  gap: 10px;
+  padding-right: 10px;
+}
+.technology-marquee-item {
+  position: relative;
+  display: grid;
+  width: 78px;
+  height: 70px;
+  flex: 0 0 78px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(108, 174, 191, 0.23);
+  border-radius: 13px 5px 13px 5px;
+  background: linear-gradient(145deg, rgba(15, 29, 39, 0.72), rgba(8, 15, 23, 0.66));
+  color: #9be9df;
+  outline: none;
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    background-color 0.28s ease,
+    box-shadow 0.28s ease,
+    color 0.28s ease;
+}
+.technology-marquee-item svg {
+  width: 27px;
+  height: 27px;
+  fill: currentColor;
+  transition:
+    transform 0.28s ease,
+    color 0.28s ease;
+}
+.technology-marquee-label {
+  position: absolute;
+  right: 3px;
+  bottom: 5px;
+  left: 3px;
+  overflow: hidden;
+  color: #d5f8f2;
+  font: 8px/1.2 var(--mono);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease;
+}
+.technology-marquee-item:hover,
+.technology-marquee-item:focus-visible {
+  z-index: 1;
+  border-color: rgba(104, 231, 215, 0.82);
+  background: linear-gradient(145deg, rgba(23, 63, 68, 0.94), rgba(11, 34, 40, 0.94));
+  color: #78e7d5;
+  box-shadow: 0 0 20px rgba(78, 211, 194, 0.18);
+  transform: translateY(-3px);
+}
+.technology-marquee-item:hover svg,
+.technology-marquee-item:focus-visible svg {
+  transform: translateY(-7px) scale(0.86);
+}
+.technology-marquee-item:hover .technology-marquee-label,
+.technology-marquee-item:focus-visible .technology-marquee-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+.technology-marquee:hover .technology-marquee-track,
+.technology-marquee:focus-within .technology-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes technology-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
 .site-header.is-scrolled {
   background: linear-gradient(
     90deg,
@@ -4714,4 +4820,40 @@ main section[id] {
     gap: 7px;
     font-size: 11px;
   }
+  .technology-marquee-wrap {
+    margin-top: 29px;
+    padding-top: 15px;
+  }
+  .technology-marquee {
+    padding-block: 10px 13px;
+  }
+  .technology-marquee-group {
+    gap: 8px;
+    padding-right: 8px;
+  }
+  .technology-marquee-item {
+    width: 70px;
+    height: 66px;
+    flex-basis: 70px;
+  }
 }
+@media (prefers-reduced-motion: reduce) {
+  .technology-marquee {
+    overflow-x: auto;
+    mask-image: none;
+    scrollbar-width: none;
+  }
+  .technology-marquee::-webkit-scrollbar {
+    display: none;
+  }
+  .technology-marquee-track {
+    animation: none;
+    will-change: auto;
+  }
+  .technology-marquee-item,
+  .technology-marquee-item svg,
+  .technology-marquee-label {
+    transition: none;
+  }
+}
+

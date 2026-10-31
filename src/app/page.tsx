@@ -4,6 +4,7 @@ import { HeroAnimationSelector } from "@/components/hero-animation-selector";
 import { AchievementGrid } from "@/components/achievement-grid";
 import { SectionKicker } from "@/components/section-kicker";
 import { SocialLinks } from "@/components/social-links";
+import { TechLogoMarquee } from "@/components/tech-logo-marquee";
 import { career, projects, expertise, education } from "@/data/portfolio";
 import { assetPath } from "@/lib/assets";
 
@@ -183,6 +184,7 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+            <TechLogoMarquee />
           </div>
         </section>
 
@@ -240,3 +242,4 @@ export default function HomePage() {
     </>
   );
 }
+

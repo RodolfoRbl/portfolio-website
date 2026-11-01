@@ -2,9 +2,9 @@ export type CareerEntry = {
   title: string;
   company: string;
   date: string;
+  area: string;
   logo?: string;
   logoClass?: string;
-  impact: string;
   highlights: string[];
 };
 
@@ -13,11 +13,11 @@ export const career: CareerEntry[] = [
     title: "AI Cloud Engineer",
     company: "Ford Motor Company",
     date: "Feb 2025 – Present",
+    area: "Global Data Insights & Analytics",
     logo: "/logos/ford.png",
     logoClass: "ford-logo",
-    impact:
-      "Cut warranty insight latency from 24 hours to seconds across a platform serving 40M claims daily.",
     highlights: [
+      "Cut warranty insight latency from 24 hours to seconds across a platform serving 40M claims daily.",
       "Built LLM multi-agent workflows for claims classification and root-cause analysis.",
       "Coordinated predictive data platform work spanning 100+ vehicle lines and four regions.",
       "Reduced cloud spend by 80% and tripled prediction throughput.",
@@ -27,10 +27,11 @@ export const career: CareerEntry[] = [
     title: "Data Scientist Associate",
     company: "BBVA",
     date: "Dec 2022 – Feb 2025",
+    area: "Credit Intelligence & Decision Science",
     logo: "/logos/bbva.png",
     logoClass: "bbva-logo",
-    impact: "Raised monthly payroll-loan allocation by 42%, reaching more than $150M.",
     highlights: [
+      "Raised monthly payroll-loan allocation by 42%, reaching more than $150M.",
       "Applied genetic algorithms and linear programming to pricing and allocation.",
       "Built credit-default models and reusable Python data science and ETL tools.",
       "Supervised three data engineers; models contributed to 6% annual product sales.",
@@ -40,10 +41,11 @@ export const career: CareerEntry[] = [
     title: "Senior Data Engineering Analyst",
     company: "Citi",
     date: "Jul 2021 – Dec 2022",
+    area: "Data Engineering",
     logo: "/logos/citi.png",
     logoClass: "citi-logo",
-    impact: "Reengineered 10+ data projects, reducing execution time by up to 35%.",
     highlights: [
+      "Reengineered 10+ data projects, reducing execution time by up to 35%.",
       "Improved data quality and automated workflows across more than five departments.",
       "Led Python training for BI, regulatory reporting, and predictive modeling teams.",
     ],
@@ -52,10 +54,11 @@ export const career: CareerEntry[] = [
     title: "Reinsurance Executive",
     company: "SUMMA Intermediario de Reaseguro",
     date: "Dec 2020 – Jul 2021",
+    area: "Insurance Claims Intelligence",
     logo: "/logos/summa.png",
     logoClass: "summa-logo",
-    impact: "Automated monthly processing, reducing delivery time from days to hours.",
     highlights: [
+      "Automated monthly processing, reducing delivery time from days to hours.",
       "Automated premium and claims workflows.",
       "Created interactive dashboards to monitor reinsurance contracts.",
     ],
@@ -64,15 +67,19 @@ export const career: CareerEntry[] = [
     title: "Social Service",
     company: "Tax Administration Service (SAT)",
     date: "Nov 2019 – Apr 2020",
-    impact: "Registered, managed, and analyzed tax credit information.",
-    highlights: ["Supported accurate tracking and review of tax credit records."],
+    area: "Community Outreach",
+    highlights: [
+      "Registered, managed, and analyzed tax credit information.",
+      "Supported accurate tracking and review of tax credit records.",
+    ],
   },
   {
     title: "Payroll Assistant",
     company: "ON Partners",
     date: "Jul 2017 – May 2018",
-    impact: "Managed payroll records for more than 3,000 employees.",
+    area: "Payroll Operations",
     highlights: [
+      "Managed payroll records for more than 3,000 employees.",
       "Built an automated Excel and VBA report to monitor employee schedules and locations.",
       "Helped teammates work faster by sharing advanced Word and Excel techniques.",
     ],

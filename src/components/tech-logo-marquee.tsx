@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import type { PointerEvent } from "react";
 import {
   siApacheairflow,
   siApachespark,
@@ -57,11 +61,96 @@ function TechnologyGroup({ decorative = false }: { decorative?: boolean }) {
 }
 
 export function TechLogoMarquee() {
+  const viewport = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ pointerId: number; startX: number; scrollLeft: number } | null>(null);
+  const paused = useRef(false);
+  const hovering = useRef(false);
+  const offset = useRef(0);
+
+  useEffect(() => {
+    const element = viewport.current;
+    const movingTrack = track.current;
+    if (!element || !movingTrack) return;
+
+    let visible = false;
+    let frame = 0;
+    let previousTime = 0;
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+    });
+    observer.observe(element);
+
+    const animate = (time: number) => {
+      const loopWidth = movingTrack.children[0]?.getBoundingClientRect().width ?? 0;
+      if (visible && !paused.current && !drag.current && loopWidth > 0) {
+        if (previousTime) offset.current += ((time - previousTime) * 18) / 1000;
+        if (offset.current >= loopWidth) offset.current -= loopWidth;
+        movingTrack.style.transform = `translate3d(${-offset.current}px, 0, 0)`;
+      }
+      previousTime = time;
+      frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const element = event.currentTarget;
+    drag.current = { pointerId: event.pointerId, startX: event.clientX, scrollLeft: offset.current };
+    paused.current = true;
+    element.setPointerCapture(event.pointerId);
+    element.classList.add("is-dragging");
+  };
+
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (drag.current?.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    const movingTrack = track.current;
+    const loopWidth = movingTrack?.children[0]?.getBoundingClientRect().width ?? 0;
+    if (!movingTrack || loopWidth <= 0) return;
+    offset.current = drag.current.scrollLeft - (event.clientX - drag.current.startX);
+    offset.current = ((offset.current % loopWidth) + loopWidth) % loopWidth;
+    movingTrack.style.transform = `translate3d(${-offset.current}px, 0, 0)`;
+  };
+
+  const endDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (drag.current?.pointerId !== event.pointerId) return;
+    drag.current = null;
+    paused.current = hovering.current;
+    event.currentTarget.classList.remove("is-dragging");
+  };
+
   return (
     <div className="technology-marquee-wrap reveal">
-      <p className="technology-marquee-heading">A few tools from my day-to-day work</p>
-      <div className="technology-marquee" role="group" aria-label="Selected technology logos">
-        <div className="technology-marquee-track">
+      <div
+        className="technology-marquee"
+        ref={viewport}
+        role="group"
+        aria-label="Selected technology logos. Drag or swipe to explore."
+        onPointerEnter={(event) => {
+          if (event.pointerType === "mouse") {
+            hovering.current = true;
+            paused.current = true;
+          }
+        }}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "mouse") {
+            hovering.current = false;
+            paused.current = Boolean(drag.current);
+          }
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
+        <div className="technology-marquee-track" ref={track}>
           <TechnologyGroup />
           <TechnologyGroup decorative />
         </div>

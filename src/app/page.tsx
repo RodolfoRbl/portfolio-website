@@ -22,7 +22,6 @@ export default function HomePage() {
               <SectionKicker icon="career">Career</SectionKicker>
               <h2>My Career So Far</h2>
             </div>
-            <p>From actuarial foundations to AI-powered data platforms.</p>
           </div>
           <div className="timeline">
             {career.map((job) => (
@@ -45,7 +44,7 @@ export default function HomePage() {
                     </div>
                     <span className="company-name">{job.company}</span>
                   </div>
-                  <p className="role-impact">{job.impact}</p>
+                  <p className="role-impact">{job.area}</p>
                   <details>
                     <summary>Role highlights</summary>
                     <ul>
@@ -127,6 +126,7 @@ export default function HomePage() {
                 <h2>My AI and Data Toolkit</h2>
               </div>
             </div>
+            <TechLogoMarquee />
             <div className="skill-groups reveal">
               {expertise.map((area) => (
                 <div
@@ -151,7 +151,6 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
-            <TechLogoMarquee />
           </div>
         </section>
 
@@ -171,7 +170,6 @@ export default function HomePage() {
                   ) : (
                     <>
                       <strong>{item.brand}</strong>
-                      <small>{item.brand === "IBM" ? "DATA SCIENCE" : "ENGLISH"}</small>
                     </>
                   )}
                 </div>

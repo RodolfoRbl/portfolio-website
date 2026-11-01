@@ -45,9 +45,8 @@ export function HeroSection() {
           AI Engineer <i>·</i> Data Scientist <i>·</i> Data Engineer
         </p>
         <p className="hero-intro">
-          I started in actuarial and payroll roles, moved through reinsurance and banking, and now
-          build AI and data platforms at Ford. My work brings machine learning, data engineering,
-          cloud, and optimization together to solve practical problems.
+          I enjoy using data and AI to make complex systems easier to understand and decisions
+          easier to make.
         </p>
         <div className="hero-actions">
           <a className="button button-primary hero-cta" href="#contact">

@@ -4792,6 +4792,7 @@ main section[id] {
 }
 .technology-marquee-wrap {
   margin-top: 38px;
+  margin-bottom: 56px;
   padding-top: 18px;
   border-top: 1px solid rgba(104, 156, 176, 0.14);
 }
@@ -4803,8 +4804,19 @@ main section[id] {
 }
 .technology-marquee {
   overflow: hidden;
+  overflow-y: hidden;
   padding: 12px 0 16px;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  scrollbar-width: none;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 2%, #000 98%, transparent 100%);
+}
+.technology-marquee::-webkit-scrollbar {
+  display: none;
+}
+.technology-marquee.is-dragging {
+  cursor: grabbing;
 }
 .technology-marquee-track,
 .technology-marquee-group {
@@ -4813,7 +4825,6 @@ main section[id] {
   align-items: center;
 }
 .technology-marquee-track {
-  animation: technology-marquee-scroll 48s linear infinite;
   will-change: transform;
 }
 .technology-marquee-group {
@@ -4835,11 +4846,11 @@ main section[id] {
   color: #9be9df;
   outline: none;
   transition:
-    transform 0.28s ease,
-    border-color 0.28s ease,
-    background-color 0.28s ease,
-    box-shadow 0.28s ease,
-    color 0.28s ease;
+    transform 0.36s cubic-bezier(0.2, 0.75, 0.25, 1.2),
+    border-color 0.32s ease,
+    background-color 0.32s ease,
+    box-shadow 0.36s ease,
+    color 0.32s ease;
 }
 .technology-marquee-item svg {
   width: 27px;
@@ -4873,28 +4884,16 @@ main section[id] {
   background: linear-gradient(145deg, rgba(23, 63, 68, 0.94), rgba(11, 34, 40, 0.94));
   color: #78e7d5;
   box-shadow: 0 0 20px rgba(78, 211, 194, 0.18);
-  transform: translateY(-3px);
+  transform: translateY(-4px) scale(1.17);
 }
 .technology-marquee-item:hover svg,
 .technology-marquee-item:focus-visible svg {
-  transform: translateY(-7px) scale(0.86);
+  transform: translateY(-8px) scale(1.12);
 }
 .technology-marquee-item:hover .technology-marquee-label,
 .technology-marquee-item:focus-visible .technology-marquee-label {
   opacity: 1;
   transform: translateY(0);
-}
-.technology-marquee:hover .technology-marquee-track,
-.technology-marquee:focus-within .technology-marquee-track {
-  animation-play-state: paused;
-}
-@keyframes technology-marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
 }
 .site-header.is-scrolled {
   background: linear-gradient(
@@ -4930,6 +4929,7 @@ main section[id] {
   }
   .technology-marquee-wrap {
     margin-top: 29px;
+    margin-bottom: 40px;
     padding-top: 15px;
   }
   .technology-marquee {
@@ -4947,12 +4947,7 @@ main section[id] {
 }
 @media (prefers-reduced-motion: reduce) {
   .technology-marquee {
-    overflow-x: auto;
     mask-image: none;
-    scrollbar-width: none;
-  }
-  .technology-marquee::-webkit-scrollbar {
-    display: none;
   }
   .technology-marquee-track {
     animation: none;

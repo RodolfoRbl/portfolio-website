@@ -5458,34 +5458,111 @@ main section[id] {
   }
 }
 
-/* Single Dendrite hero: keep the neural fibers behind a soft text-safe fade. */
-.hero--neuron .hero-scene canvas {
+/* Dendrite artwork: a responsive image pair sits behind the live Hero copy. */
+.hero--neuron .hero-scene-art {
+  position: absolute;
+  inset: 0;
   z-index: 1;
+  display: block;
+  overflow: hidden;
+}
+.hero--neuron .hero-art-image {
+  object-fit: cover;
+  object-position: center right;
+  filter: saturate(1.08) brightness(0.92);
 }
 .hero--neuron .hero-scene-glow {
   z-index: 2;
   pointer-events: none;
   background:
-    linear-gradient(90deg, #050812 0%, rgba(5, 8, 18, 0.99) 25%, rgba(5, 8, 18, 0.92) 38%, rgba(5, 8, 18, 0.7) 49%, rgba(5, 8, 18, 0.24) 65%, transparent 82%),
-    linear-gradient(180deg, rgba(5, 8, 18, 0.42) 0%, transparent 20%, transparent 78%, rgba(5, 8, 18, 0.62) 100%),
-    radial-gradient(ellipse at 77% 43%, rgba(0, 166, 255, 0.08), transparent 39%);
+    radial-gradient(ellipse 92% 76% at 24% 48%, rgba(3, 8, 18, 0.5) 0%, rgba(3, 8, 18, 0.28) 48%, transparent 100%),
+    linear-gradient(90deg, #050812 0%, rgba(5, 8, 18, 0.98) 25%, rgba(5, 8, 18, 0.9) 39%, rgba(5, 8, 18, 0.52) 52%, rgba(5, 8, 18, 0.12) 68%, transparent 82%),
+    linear-gradient(180deg, rgba(5, 8, 18, 0.2) 0%, transparent 22%, transparent 75%, rgba(5, 8, 18, 0.18) 100%);
 }
 .hero--neuron .hero-copy--showcase {
   z-index: 3;
+  isolation: isolate;
 }
-.hero--neuron .hero-scene-glow,
+.hero--neuron .scroll-cue {
+  z-index: 3;
+}
+.hero--neuron .hero-bottom-fade {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 36%;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 10, 16, 0) 0%, rgba(7, 10, 16, 0.16) 28%, rgba(7, 10, 16, 0.58) 66%, rgba(7, 10, 16, 0.9) 88%, #070a10 100%);
+}
 .hero--neuron .hero-copy--showcase h1 span {
-  transition: filter 900ms ease, background-position 900ms ease;
+  margin-left: 0 !important;
+  background: none !important;
+  color: #48dfff !important;
+  -webkit-text-fill-color: #48dfff !important;
+  text-shadow: none !important;
+  animation: none !important;
+  transition: filter 900ms ease;
 }
-@media (max-width: 700px) {
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .hero--neuron .hero-copy--showcase h1 span {
+    background-color: transparent !important;
+    background-image: linear-gradient(105deg, #48dfff 0%, #bdfff4 52%, #48dfff 100%) !important;
+    background-position: 0 0 !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+}
+.hero--neuron .hero-copy--showcase .location-note span:last-child {
+  width: fit-content;
+  margin-top: 3px;
+  padding: 5px 10px;
+  border: 1px solid rgba(85, 213, 199, 0.32);
+  border-radius: 999px;
+  background: rgba(45, 161, 150, 0.15);
+  color: #91eee0;
+  letter-spacing: 0.035em;
+}
+@media (min-width: 701px) {
   .hero--neuron .hero-scene-glow {
     background:
-      linear-gradient(180deg, #050812 0%, rgba(5, 8, 18, 0.98) 38%, rgba(5, 8, 18, 0.88) 50%, rgba(5, 8, 18, 0.36) 69%, transparent 100%),
-      linear-gradient(90deg, rgba(5, 8, 18, 0.28), transparent 80%);
+      radial-gradient(ellipse 92% 76% at 24% 48%, rgba(3, 8, 18, 0.5) 0%, rgba(3, 8, 18, 0.28) 48%, transparent 100%),
+      linear-gradient(90deg, #050812 0%, rgba(5, 8, 18, 0.98) 25%, rgba(5, 8, 18, 0.9) 39%, rgba(5, 8, 18, 0.52) 52%, rgba(5, 8, 18, 0.12) 68%, transparent 82%),
+      linear-gradient(180deg, rgba(5, 8, 18, 0.22) 0%, transparent 19%, transparent 72%, rgba(7, 10, 16, 0.48) 87%, #070a10 100%);
+  }
+}
+@media (max-width: 700px) {
+  .hero--neuron .hero-art-image {
+    object-position: 64% 50%;
+    transform: scale(1.28);
+    transform-origin: 64% 70%;
+  }
+  .hero--neuron .hero-copy--showcase {
+    top: 88px;
+  }
+  .hero--neuron .hero-copy--showcase h1 span {
+    text-shadow: none !important;
+  }
+  .hero--neuron .hero-scene-glow {
+    background:
+      radial-gradient(ellipse 118% 74% at 34% 43%, rgba(3, 8, 18, 0.48) 0%, rgba(3, 8, 18, 0.28) 52%, transparent 100%),
+      linear-gradient(180deg, rgba(5, 8, 18, 0.46) 0%, rgba(5, 8, 18, 0.32) 32%, rgba(5, 8, 18, 0.22) 62%, rgba(5, 8, 18, 0.08) 82%, rgba(7, 10, 16, 0.14) 100%),
+      linear-gradient(90deg, rgba(5, 8, 18, 0.67) 0%, rgba(5, 8, 18, 0.44) 48%, rgba(5, 8, 18, 0.15) 100%);
+  }
+  .hero--neuron .hero-copy--showcase .eyebrow,
+  .hero--neuron .hero-copy--showcase h1,
+  .hero--neuron .hero-copy--showcase .hero-role,
+  .hero--neuron .hero-copy--showcase .hero-intro,
+  .hero--neuron .hero-copy--showcase .location-note {
+    text-shadow: 0 2px 14px rgba(1, 4, 11, 0.88), 0 1px 3px rgba(1, 4, 11, 0.96);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero--neuron .hero-scene-glow,
   .hero--neuron .hero-copy--showcase h1 span {
     transition: none;
   }

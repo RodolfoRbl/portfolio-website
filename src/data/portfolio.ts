@@ -362,31 +362,4 @@ export const education = [
   },
 ];
 
-export const animationOptions = [
-  {
-    id: "nodes",
-    number: "03",
-    label: "Neural nodes",
-    detail: "Connections awaken as signals move through the network.",
-  },
-  {
-    id: "brain",
-    number: "04",
-    label: "Luminous brain",
-    detail: "Electric pulses travel along luminous brain-like fibers.",
-  },
-  {
-    id: "mesh",
-    number: "09",
-    label: "Neural mesh",
-    detail: "An interactive 3D surface ripples with the data flow.",
-  },
-  {
-    id: "waves",
-    number: "02",
-    label: "Particle waves",
-    detail: "Particle bands bend gently toward the cursor.",
-  },
-] as const;
-
-export type AnimationId = (typeof animationOptions)[number]["id"];
+export type AnimationId = "neuron";

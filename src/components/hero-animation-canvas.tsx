@@ -1,14 +1,12 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
-import type { AnimationId } from "@/data/portfolio";
+import { useEffect, useRef } from "react";
 
-type Point = { x: number; y: number; z: number; phase: number };
-type Edge = readonly [number, number];
+type NeuralCanvasProps = { visible: boolean; reducedMotion: boolean };
+type Node = { x: number; y: number; phase: number; depth: number };
+type Edge = readonly [number, number, number];
 
-function randomGenerator(initialSeed: number) {
+function seededRandom(initialSeed: number) {
   let seed = initialSeed;
   return () => {
     seed = (seed * 16807) % 2147483647;
@@ -16,287 +14,262 @@ function randomGenerator(initialSeed: number) {
   };
 }
 
-function createPoints(type: AnimationId): Point[] {
-  const random = randomGenerator(
-    type === "nodes" ? 71 : type === "brain" ? 137 : type === "mesh" ? 211 : 313,
-  );
+export function NeuralNetworkCanvas({ visible, reducedMotion }: NeuralCanvasProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  if (type === "waves") {
-    const rows = 11;
-    const columns = 30;
-    return Array.from({ length: rows * columns }, (_, index) => {
-      const row = Math.floor(index / columns);
-      const column = index % columns;
-      return {
-        x: -1.6 + (column / (columns - 1)) * 3.2,
-        y: -0.7 + (row / (rows - 1)) * 1.4,
-        z: 0,
-        phase: row * 0.33 + column * 0.07,
-      };
-    });
-  }
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const host = canvas?.parentElement;
+    const context = canvas?.getContext("2d", { alpha: true });
+    if (!canvas || !host || !context) return;
 
-  if (type === "mesh") {
-    return Array.from({ length: 106 }, () => {
-      const theta = random() * Math.PI * 2;
-      const radius = Math.sqrt(random());
-      return {
-        x: Math.cos(theta) * radius * 1.48,
-        y: Math.sin(theta) * radius * 0.88,
-        z: 0,
-        phase: random() * Math.PI * 2,
-      };
-    });
-  }
-
-  const count = type === "brain" ? 78 : 64;
-  return Array.from({ length: count }, () => {
-    const theta = random() * Math.PI * 2;
-    const v = random() * 2 - 1;
-    const radial = Math.sqrt(1 - v * v);
-    const groove =
-      type === "brain" ? 1 - 0.11 * Math.exp(-Math.pow(Math.cos(theta) * radial * 7, 2)) : 1;
-    const lobe = type === "brain" ? 1 + 0.035 * Math.sin(theta * 8) * Math.cos(v * 10) : 1;
-    return {
-      x: Math.cos(theta) * radial * 1.02 * groove * lobe,
-      y: v * 0.8 * lobe,
-      z: Math.sin(theta) * radial * 0.55 * lobe,
+    const random = seededRandom(137);
+    const nodes: Node[] = Array.from({ length: 38 }, () => ({
+      x: 0.045 + random() * 0.91,
+      y: 0.07 + random() * 0.86,
       phase: random() * Math.PI * 2,
-    };
-  });
-}
+      depth: 0.48 + random() * 0.52,
+    }));
+    const edgeKeys = new Set<string>();
+    nodes.forEach((a, index) => {
+      nodes
+        .map((b, neighbor) => ({ neighbor, distance: Math.hypot(a.x - b.x, a.y - b.y) }))
+        .filter((candidate) => candidate.neighbor !== index)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 3)
+        .forEach(({ neighbor, distance }) => {
+          if (distance < 0.34) edgeKeys.add(`${Math.min(index, neighbor)}:${Math.max(index, neighbor)}`);
+        });
+    });
+    const edges: Edge[] = [...edgeKeys].map((key) => {
+      const [from, to] = key.split(":").map(Number);
+      return [from, to, random() * Math.PI * 2];
+    });
 
-function createEdges(points: Point[], type: AnimationId): Edge[] {
-  if (type === "waves") {
-    const columns = 30;
-    const rows = points.length / columns;
-    const edges: Edge[] = [];
-    for (let row = 0; row < rows; row += 1) {
-      for (let column = 0; column < columns - 1; column += 1) {
-        const index = row * columns + column;
-        edges.push([index, index + 1]);
-        if (column % 4 === row % 4 && row < rows - 1) edges.push([index, index + columns]);
+    let width = 0;
+    let height = 0;
+    let pixelRatio = 1;
+    let elapsed = 0;
+    let frame = 0;
+    let previous = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let active = visible;
+    let disposed = false;
+
+    const draw = (timeMs: number) => {
+      if (!width || !height) return;
+      const time = timeMs / 1000;
+      const areaLeft = width * 0.47;
+      const areaWidth = width * 0.53;
+      const cx = areaLeft + areaWidth * 0.5;
+      const cy = height * 0.51;
+      const unit = Math.min(areaWidth, height) * 0.96;
+      context.clearRect(0, 0, width, height);
+
+      if (!reducedMotion) {
+        pointerX += (targetX - pointerX) * 0.035;
+        pointerY += (targetY - pointerY) * 0.035;
       }
-    }
-    return edges;
-  }
 
-  const edgeKeys = new Set<string>();
-  points.forEach((point, index) => {
-    points
-      .map((candidate, candidateIndex) => ({
-        candidateIndex,
-        distance:
-          Math.pow(point.x - candidate.x, 2) +
-          Math.pow(point.y - candidate.y, 2) +
-          Math.pow((point.z - candidate.z) * 0.8, 2),
-      }))
-      .filter((candidate) => candidate.candidateIndex !== index)
-      .sort((left, right) => left.distance - right.distance)
-      .slice(0, type === "brain" || type === "mesh" ? 3 : 2)
-      .forEach(({ candidateIndex, distance }) => {
-        if (distance < (type === "brain" ? 0.42 : type === "mesh" ? 0.36 : 0.58)) {
-          const first = Math.min(index, candidateIndex);
-          const second = Math.max(index, candidateIndex);
-          edgeKeys.add(`${first}:${second}`);
-        }
+      const points = nodes.map((node) => ({
+        x: areaLeft + node.x * areaWidth + Math.sin(time * 0.38 + node.phase) * 11 + pointerX * 7 * node.depth,
+        y: node.y * height + Math.cos(time * 0.31 + node.phase) * 6 + pointerY * 5 * node.depth,
+        radius: 1.5 + node.depth * 1.8,
+      }));
+
+      const haze = context.createRadialGradient(cx, cy, 8, cx, cy, unit * 0.49);
+      haze.addColorStop(0, "rgba(42,154,166,.12)");
+      haze.addColorStop(0.48, "rgba(30,108,152,.06)");
+      haze.addColorStop(1, "rgba(7,10,16,0)");
+      context.fillStyle = haze;
+      context.fillRect(areaLeft, 0, areaWidth, height);
+
+      edges.forEach(([from, to, bendPhase], index) => {
+        const a = points[from];
+        const b = points[to];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const length = Math.hypot(dx, dy) || 1;
+        const bend = Math.sin(time * 0.34 + bendPhase) * Math.min(28, length * 0.26);
+        const qx = (a.x + b.x) * 0.5 - (dy / length) * bend;
+        const qy = (a.y + b.y) * 0.5 + (dx / length) * bend;
+        context.beginPath();
+        context.moveTo(a.x, a.y);
+        context.quadraticCurveTo(qx, qy, b.x, b.y);
+        context.strokeStyle = `rgba(91,205,199,${0.055 + nodes[from].depth * 0.075})`;
+        context.lineWidth = 0.58;
+        context.stroke();
+
+        const phase = (time * 0.12 + index * 0.067) % 1;
+        const progress = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+        const inverse = 1 - progress;
+        const x = inverse * inverse * a.x + 2 * inverse * progress * qx + progress * progress * b.x;
+        const y = inverse * inverse * a.y + 2 * inverse * progress * qy + progress * progress * b.y;
+        context.beginPath();
+        context.arc(x, y, 1, 0, Math.PI * 2);
+        context.fillStyle = "rgba(169,255,237,.76)";
+        context.shadowColor = "#56dacc";
+        context.shadowBlur = 6;
+        context.fill();
+        context.shadowBlur = 0;
       });
-  });
-  return [...edgeKeys].map((key) => key.split(":").map(Number) as [number, number]);
-}
 
-function makeDynamicGeometry(pointCount: number) {
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(pointCount * 3);
-  const attribute = new THREE.BufferAttribute(positions, 3);
-  attribute.setUsage(THREE.DynamicDrawUsage);
-  geometry.setAttribute("position", attribute);
-  return { geometry, positions, attribute };
-}
+      points.forEach((point, index) => {
+        const activation = 0.5 + 0.5 * Math.sin(time * (0.55 + (index % 4) * 0.09) + nodes[index].phase);
+        context.beginPath();
+        context.arc(point.x, point.y, point.radius + activation * 1.1, 0, Math.PI * 2);
+        context.fillStyle = `rgba(111,231,216,${0.36 + activation * 0.5})`;
+        context.shadowColor = index % 3 === 0 ? "#8cdaff" : "#59d5cb";
+        context.shadowBlur = 4 + activation * 9;
+        context.fill();
+        context.shadowBlur = 0;
+      });
 
-function AnimatedField({ type }: { type: AnimationId }) {
-  const group = useRef<THREE.Group>(null);
-  const points = useMemo(() => createPoints(type), [type]);
-  const edges = useMemo(() => createEdges(points, type), [points, type]);
-  const pulseEdges = useMemo(
-    () => edges.filter((_, index) => index % 3 === 0).slice(0, 28),
-    [edges],
-  );
-  const nodeBuffer = useMemo(() => makeDynamicGeometry(points.length), [points.length]);
-  const edgeBuffer = useMemo(() => makeDynamicGeometry(edges.length * 2), [edges.length]);
-  const pulseBuffer = useMemo(() => makeDynamicGeometry(pulseEdges.length), [pulseEdges.length]);
-
-  useEffect(() => {
-    return () => {
-      nodeBuffer.geometry.dispose();
-      edgeBuffer.geometry.dispose();
-      pulseBuffer.geometry.dispose();
-    };
-  }, [edgeBuffer.geometry, nodeBuffer.geometry, pulseBuffer.geometry]);
-
-  useFrame(({ clock, pointer }) => {
-    const time = clock.elapsedTime;
-    if (group.current) {
-      group.current.rotation.y += (pointer.x * 0.065 - group.current.rotation.y) * 0.025;
-      group.current.rotation.x += (-pointer.y * 0.035 - group.current.rotation.x) * 0.025;
-    }
-
-    const coordinates = points.map((point) => {
-      const wave = Math.sin(time * 0.52 + point.phase);
-      const cursorDistance = Math.hypot(point.x - pointer.x * 1.3, point.y - pointer.y * 0.85);
-      const cursorLift = type === "waves" || type === "mesh" ? Math.exp(-cursorDistance * 3) : 0;
-      if (type === "mesh") {
-        return [
-          point.x,
-          point.y,
-          0.21 * Math.sin(point.x * 2.1 + time * 0.8) * Math.cos(point.y * 2.4 - time * 0.43) +
-            wave * 0.05 +
-            cursorLift * 0.22,
-        ];
-      }
-      if (type === "waves") {
-        return [
-          point.x,
-          point.y,
-          0.19 * Math.sin(point.x * 2.5 + time * 0.75 + point.phase) +
-            0.06 * Math.cos(point.y * 7.4 - time * 0.46) +
-            cursorLift * 0.2,
-        ];
-      }
-      return [
-        point.x + Math.sin(time * 0.32 + point.phase) * 0.035,
-        point.y + Math.cos(time * 0.27 + point.phase) * 0.03,
-        point.z + wave * (type === "brain" ? 0.035 : 0.065),
+      const orbits = [
+        { angle: time * 0.065, rx: unit * 0.42, ry: unit * 0.18, color: "rgba(91,221,207,.47)", phase: 0.4 },
+        { angle: time * 0.065 + 0.785, rx: unit * 0.43, ry: unit * 0.155, color: "rgba(95,178,232,.39)", phase: 2.3 },
+        { angle: time * 0.065 + 1.571, rx: unit * 0.42, ry: unit * 0.14, color: "rgba(151,232,221,.34)", phase: 4.5 },
+        { angle: time * 0.065 + 2.356, rx: unit * 0.46, ry: unit * 0.12, color: "rgba(93,167,219,.3)", phase: 5.2 },
       ];
-    });
+      orbits.forEach((orbit, index) => {
+        context.save();
+        context.translate(cx, cy);
+        context.rotate(orbit.angle);
+        context.beginPath();
+        context.ellipse(0, 0, orbit.rx, orbit.ry, 0, 0, Math.PI * 2);
+        context.strokeStyle = orbit.color;
+        context.lineWidth = 1.05;
+        context.stroke();
+        const angle = time * (index === 1 ? -0.34 : 0.28) + orbit.phase;
+        const x = Math.cos(angle) * orbit.rx;
+        const y = Math.sin(angle) * orbit.ry;
+        const glow = context.createRadialGradient(x, y, 0, x, y, 15);
+        glow.addColorStop(0, index === 1 ? "rgba(160,225,255,.95)" : "rgba(159,255,233,.98)");
+        glow.addColorStop(1, "rgba(91,213,202,0)");
+        context.fillStyle = glow;
+        context.beginPath();
+        context.arc(x, y, 15, 0, Math.PI * 2);
+        context.fill();
+        context.beginPath();
+        context.arc(x, y, 3.1, 0, Math.PI * 2);
+        context.fillStyle = "#c5fff2";
+        context.shadowColor = "#61d9ce";
+        context.shadowBlur = 12;
+        context.fill();
+        context.shadowBlur = 0;
+        context.restore();
+      });
 
-    coordinates.forEach(([x, y, z], index) => {
-      const offset = index * 3;
-      nodeBuffer.positions[offset] = x;
-      nodeBuffer.positions[offset + 1] = y;
-      nodeBuffer.positions[offset + 2] = z;
-    });
-    edges.forEach(([first, second], index) => {
-      const firstPoint = coordinates[first];
-      const secondPoint = coordinates[second];
-      const offset = index * 6;
-      edgeBuffer.positions.set(firstPoint, offset);
-      edgeBuffer.positions.set(secondPoint, offset + 3);
-    });
-    pulseEdges.forEach(([first, second], index) => {
-      const start = coordinates[first];
-      const end = coordinates[second];
-      const progress = (time * (type === "brain" ? 0.12 : 0.16) + index * 0.137) % 1;
-      const eased = progress * progress * (3 - 2 * progress);
-      const offset = index * 3;
-      pulseBuffer.positions[offset] = THREE.MathUtils.lerp(start[0], end[0], eased);
-      pulseBuffer.positions[offset + 1] = THREE.MathUtils.lerp(start[1], end[1], eased);
-      pulseBuffer.positions[offset + 2] = THREE.MathUtils.lerp(start[2], end[2], eased);
-    });
-
-    nodeBuffer.attribute.needsUpdate = true;
-    edgeBuffer.attribute.needsUpdate = true;
-    pulseBuffer.attribute.needsUpdate = true;
-    nodeBuffer.geometry.computeBoundingSphere();
-    edgeBuffer.geometry.computeBoundingSphere();
-    pulseBuffer.geometry.computeBoundingSphere();
-  });
-
-  const edgeOpacity = type === "brain" ? 0.46 : type === "mesh" ? 0.32 : 0.38;
-  const edgeColor = type === "brain" ? "#68baff" : type === "mesh" ? "#58d3d1" : "#61cfc9";
-
-  return (
-    <group ref={group}>
-      <lineSegments geometry={edgeBuffer.geometry}>
-        <lineBasicMaterial color={edgeColor} transparent opacity={edgeOpacity} />
-      </lineSegments>
-      <points geometry={nodeBuffer.geometry}>
-        <pointsMaterial
-          color={type === "brain" ? "#9bcfff" : "#a7fff0"}
-          size={type === "brain" ? 0.045 : 0.04}
-          sizeAttenuation
-          transparent
-          opacity={0.86}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
-      <points geometry={pulseBuffer.geometry}>
-        <pointsMaterial
-          color="#d2fff6"
-          size={0.078}
-          sizeAttenuation
-          transparent
-          opacity={0.94}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
-    </group>
-  );
-}
-
-function DataStoreCore() {
-  const core = useRef<THREE.Group>(null);
-  const cylinder = useMemo(() => new THREE.CylinderGeometry(0.34, 0.34, 0.42, 48, 1, true), []);
-  const rimGeometry = useMemo(() => new THREE.TorusGeometry(0.34, 0.009, 6, 64), []);
-
-  useFrame(({ clock }) => {
-    if (core.current) core.current.rotation.y = Math.sin(clock.elapsedTime * 0.12) * 0.08;
-  });
-
-  useEffect(() => {
-    return () => {
-      cylinder.dispose();
-      rimGeometry.dispose();
+      const radiusX = Math.min(areaWidth * 0.115, 76);
+      const radiusY = Math.min(height * 0.105, 54);
+      const shell = radiusY * 0.58;
+      const top = cy - shell;
+      const bottom = cy + shell;
+      const body = context.createLinearGradient(cx - radiusX, cy, cx + radiusX, cy);
+      body.addColorStop(0, "rgba(10,24,35,.97)");
+      body.addColorStop(0.5, "rgba(17,42,54,.98)");
+      body.addColorStop(1, "rgba(8,20,30,.97)");
+      context.beginPath();
+      context.moveTo(cx - radiusX, top);
+      context.lineTo(cx - radiusX, bottom);
+      context.ellipse(cx, bottom, radiusX, radiusY * 0.32, 0, Math.PI, 0, true);
+      context.lineTo(cx + radiusX, top);
+      context.closePath();
+      context.fillStyle = body;
+      context.fill();
+      context.beginPath();
+      context.moveTo(cx - radiusX, top);
+      context.lineTo(cx - radiusX, bottom);
+      context.moveTo(cx + radiusX, top);
+      context.lineTo(cx + radiusX, bottom);
+      context.strokeStyle = "rgba(113,229,218,.8)";
+      context.lineWidth = 1.1;
+      context.stroke();
+      const ringRadiusY = radiusY * 0.32 * (1 + 0.012 * Math.sin(time * 0.72));
+      [top, cy, bottom].forEach((y, index) => {
+        context.beginPath();
+        context.ellipse(cx, y, radiusX, ringRadiusY, 0, 0, Math.PI * 2);
+        context.strokeStyle = index === 1 ? "rgba(153,238,226,.9)" : "rgba(98,209,205,.72)";
+        context.lineWidth = index === 1 ? 1.1 : 1;
+        context.stroke();
+      });
+      context.fillStyle = "rgba(194,242,239,.88)";
+      context.font = "9px DM Mono, monospace";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText("DATA", cx, cy + 1);
     };
-  }, [cylinder, rimGeometry]);
 
-  return (
-    <group ref={core} position={[0, -0.02, 0.16]}>
-      <mesh geometry={cylinder}>
-        <meshBasicMaterial color="#5bdacc" transparent opacity={0.28} side={THREE.DoubleSide} />
-      </mesh>
-      {[-0.21, 0, 0.21].map((y) => (
-        <mesh geometry={rimGeometry} key={y} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <meshBasicMaterial color="#9af5e4" transparent opacity={0.88} />
-        </mesh>
-      ))}
-      <mesh position={[-0.34, 0, 0]}>
-        <sphereGeometry args={[0.018, 8, 8]} />
-        <meshBasicMaterial color="#c3fff4" />
-      </mesh>
-      <mesh position={[0.34, 0, 0]}>
-        <sphereGeometry args={[0.018, 8, 8]} />
-        <meshBasicMaterial color="#c3fff4" />
-      </mesh>
-    </group>
-  );
-}
+    const resize = () => {
+      const bounds = host.getBoundingClientRect();
+      width = bounds.width;
+      height = bounds.height;
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.round(width * pixelRatio);
+      canvas.height = Math.round(height * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      draw(elapsed);
+    };
+    const loop = (now: number) => {
+      frame = 0;
+      if (disposed || !active || document.hidden) return;
+      if (now - previous < 32) {
+        frame = requestAnimationFrame(loop);
+        return;
+      }
+      previous = now;
+      elapsed = now;
+      draw(now);
+      if (!reducedMotion) frame = requestAnimationFrame(loop);
+    };
+    const start = () => {
+      if (!frame && active && !document.hidden && !reducedMotion) frame = requestAnimationFrame(loop);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      active = entry.isIntersecting;
+      if (active) start();
+      else if (frame) cancelAnimationFrame(frame);
+      if (!active) frame = 0;
+    });
+    observer.observe(host);
+    const onPointerMove = (event: PointerEvent) => {
+      if (reducedMotion || event.pointerType !== "mouse") return;
+      const bounds = host.getBoundingClientRect();
+      targetX = (event.clientX - bounds.left) / bounds.width - 0.5;
+      targetY = (event.clientY - bounds.top) / bounds.height - 0.5;
+    };
+    const onPointerLeave = () => {
+      targetX = 0;
+      targetY = 0;
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      } else start();
+    };
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(host);
+    host.addEventListener("pointermove", onPointerMove);
+    host.addEventListener("pointerleave", onPointerLeave);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    resize();
+    if (reducedMotion) draw(0);
+    else start();
 
-export function AnimationCanvas({
-  type,
-  visible,
-  reducedMotion,
-}: {
-  type: AnimationId;
-  visible: boolean;
-  reducedMotion: boolean;
-}) {
-  const frameLoop = visible && !reducedMotion ? "always" : "demand";
+    return () => {
+      disposed = true;
+      if (frame) cancelAnimationFrame(frame);
+      observer.disconnect();
+      resizeObserver.disconnect();
+      host.removeEventListener("pointermove", onPointerMove);
+      host.removeEventListener("pointerleave", onPointerLeave);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [reducedMotion, visible]);
 
-  return (
-    <Canvas
-      aria-hidden="true"
-      camera={{ position: [0, 0, 4.1], fov: 42 }}
-      dpr={[1, 1.5]}
-      frameloop={frameLoop}
-      gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
-      onCreated={({ gl }) => gl.setClearColor(new THREE.Color("#070a10"), 0)}
-    >
-      <ambientLight intensity={0.5} />
-      <AnimatedField key={type} type={type} />
-      <DataStoreCore />
-    </Canvas>
-  );
+  return <canvas ref={canvasRef} aria-hidden="true" />;
 }

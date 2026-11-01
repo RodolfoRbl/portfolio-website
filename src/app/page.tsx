@@ -1,9 +1,10 @@
 import { SiteHeader } from "@/components/site-header";
 import { SiteEffects } from "@/components/site-effects";
-import { HeroAnimationSelector } from "@/components/hero-animation-selector";
+import { HeroSection } from "@/components/hero-section";
 import { AchievementGrid } from "@/components/achievement-grid";
 import { SectionKicker } from "@/components/section-kicker";
 import { SocialLinks } from "@/components/social-links";
+import { TechLogoMarquee } from "@/components/tech-logo-marquee";
 import { career, projects, expertise, education } from "@/data/portfolio";
 import { assetPath } from "@/lib/assets";
 
@@ -13,40 +14,7 @@ export default function HomePage() {
       <SiteEffects />
       <SiteHeader />
       <main>
-        <section className="hero section-wrap" id="home">
-          <div className="hero-copy reveal">
-            <p className="eyebrow">
-              <span className="status-dot" /> AI ENGINEER <i>·</i> DATA SCIENTIST
-            </p>
-            <h1>
-              Rodolfo
-              <br />
-              <span>Robles</span>
-            </h1>
-            <p className="hero-role">
-              AI Engineer <i>·</i> Data Scientist <i>·</i> Data Engineer
-            </p>
-            <p className="hero-intro">
-              I started in actuarial and payroll roles, moved through reinsurance and banking, and
-              now build AI and data platforms at Ford. My work brings machine learning, data
-              engineering, cloud, and optimization together to solve practical problems.
-            </p>
-            <div className="hero-actions">
-              <a className="button button-primary hero-cta" href="#contact">
-                Let’s Connect!
-              </a>
-            </div>
-            <p className="location-note">
-              <span>Born in Mexico City</span>
-              <span>Open to international opportunities</span>
-            </p>
-            <SocialLinks />
-          </div>
-          <HeroAnimationSelector />
-          <a className="scroll-cue" href="#journey">
-            <span /> Scroll to explore
-          </a>
-        </section>
+        <HeroSection />
 
         <section className="journey-section section-wrap" id="journey">
           <div className="section-heading reveal">
@@ -183,6 +151,7 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+            <TechLogoMarquee />
           </div>
         </section>
 

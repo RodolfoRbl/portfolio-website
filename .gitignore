@@ -5,6 +5,7 @@
 /AGENTS.md
 /AGENTS.override.md
 /CAREER_STORY_BANK.md
+/next-env.d.ts
 
 # Generated resume output is not part of the public portfolio site.
 /dist/*.pdf

@@ -3,6 +3,8 @@
 
 # Local Codex project instructions belong to this workspace.
 /AGENTS.md
+/AGENTS.override.md
+/CAREER_STORY_BANK.md
 
 # Generated resume output is not part of the public portfolio site.
 /dist/*.pdf

@@ -190,7 +190,7 @@ export const projects: Project[] = [
     title: "Improving Warranty Reserve Allocation with Claim Cost Forecasts",
     description:
       "Modularized production forecasting pipelines to predict warranty claim costs at four levels: vehicle line, model year, part, and vehicle function. The results flow into a dashboard that supports monthly warranty reserve adjustments and annual planning.",
-    result: "4 prediction levels",
+    result: "Claim cost forecasts at 4 levels",
     resultDetail: "vehicle line · model year · part · function",
     tags: ["Claim cost forecasting", "Warranty reserves", "Data pipelines", "Forecasting"],
     tone: "project-data",

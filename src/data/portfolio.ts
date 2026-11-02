@@ -149,6 +149,16 @@ export const achievements: Achievement[] = [
     category: "ai-math",
     tone: "cat-optimization",
   },
+  {
+    type: "DATA GOVERNANCE · CITI",
+    title: "Modernizing Manual Workflows for Greater Control",
+    metric: "10+ manual workflows remediated",
+    detail: "across business teams",
+    description:
+      "Remediated more than 10 end-user computing (EUC) processes, including Excel workbooks, Visual Basic tools, manual reports, and Python scripts. Added failure monitoring, data validation, access controls, approvals, and documentation to bring these workflows under greater control.",
+    category: "leadership",
+    tone: "cat-leadership",
+  },
 ];
 
 export type Project = {
@@ -217,6 +227,17 @@ export const projects: Project[] = [
     resultDetail: "customers selected with one-third the portfolio default rate",
     tags: ["Credit risk", "Feature engineering", "Model deployment", "Customer targeting"],
     tone: "project-leadership",
+  },
+  {
+    number: "06",
+    type: "DATA GOVERNANCE · CITI",
+    title: "From Manual EUCs to Governed Data Workflows",
+    description:
+      "Coordinated the remediation of more than 10 end-user computing (EUC) processes across business teams, including workflows supporting regulatory reporting. Replaced selected Excel, Visual Basic, manual-reporting, and unoptimized Python workflows with standardized Python and SQL solutions. Designed and built replacements directly while guiding users through remediation of other workflows. Added failure monitoring, data validation, access controls, approval steps, and documentation to move these workflows into secure, monitored enterprise operations.",
+    result: "10+ EUCs remediated",
+    resultDetail: "monitored, standardized workflows across business teams",
+    tags: ["Python", "SQL", "Workflow Automation", "Data Governance"],
+    tone: "project-engineering",
   },
 ];
 

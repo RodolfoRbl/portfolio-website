@@ -212,8 +212,8 @@ export const projects: Project[] = [
     title: "Optimizing Interest-Rate Discounts to Grow Payroll Lending",
     description:
       "Designed and analyzed discount experiments and models to estimate each customer’s likelihood of taking a loan at different interest-rate discounts. Used genetic algorithms to find models with strong predictive performance while making discount size an influential factor in customer decisions. Then used linear programming to select discount levels that increased loan placement while preserving the campaign’s margin.",
-    result: "+42%",
-    resultDetail: "+$150M in monthly placement",
+    result: "+42% monthly loan allocation",
+    resultDetail: "+$150M in incremental monthly placements",
     tags: ["Genetic algorithms", "Price sensitivity", "Linear programming", "Loan allocation"],
     tone: "project-optimization",
   },
